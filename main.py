@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn import svm, datasets
+from sklearn import svm, datasets, neighbors
 from sklearn.decomposition import PCA
 
 f = open("heart+disease/processed.cleveland.data", "r")
@@ -94,6 +94,12 @@ s = svm.SVC(kernel = 'linear')
 s.fit(trainData, trainTarget)
 decisions = s.predict(testData)
 
+n_neighbors = 7 # K in KNN classifier
+nn = neighbors.KNeighborsClassifier(n_neighbors)
+nn.fit(trainData, trainTarget) #Training is done
+pr = nn.predict(testData) # testing
+print(pr)
+
 def accuracy(decisions, testTarget):
     correct = 0
     for i in range(len(decisions)):
@@ -101,7 +107,10 @@ def accuracy(decisions, testTarget):
             correct += 1
     return correct/len(decisions)
 
-print(accuracy(decisions, testTarget))
+print("accuracy of svm is: ", accuracy(decisions, testTarget))
+
+
+print("accuracy of knn is: ", accuracy(pr, testTarget))
 
 
 
