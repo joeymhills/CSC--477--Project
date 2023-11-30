@@ -1,9 +1,19 @@
 import numpy as np
 from sklearn import svm, datasets, neighbors
 from sklearn.decomposition import PCA
-from sklearn.neighbors import LocalOutlierFactor
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier, LocalOutlierFactor
 import matplotlib.pyplot as plt
 from matplotlib.legend_handler import HandlerPathCollection
+import pandas as pd
+
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
 
 f = open("heart+disease/processed.cleveland.data", "r")
 
@@ -103,45 +113,7 @@ for i in range(300,303):
     print("class 4", data[i,13])
 
 
-#https://scikit-learn.org/stable/auto_examples/neighbors/plot_lof_outlier_detection.html#sphx-glr-auto-examples-neighbors-plot-lof-outlier-detection-py
-#find outliers in dataset using "Local Outlier Factor"
 
-X = testData
-clf = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
-y_pred = clf.fit_predict(X)
-n_errors = (y_pred != ground_truth).sum()
-X_scores = clf.negative_outlier_factor_
-
-#######################################################################################
-# plot outliers
-
-def update_legend_marker_size(handle, orig):
-    "Customize size of the legend marker"
-    handle.update_from(orig)
-    handle.set_sizes([20])
-
-plt.scatter(X[:, 0], X[:, 1], color="k", s=3.0, label="Data points")
-# plot circles with radius proportional to the outlier scores
-radius = (X_scores.max() - X_scores) / (X_scores.max() - X_scores.min())
-scatter = plt.scatter(
-    X[:, 0],
-    X[:, 1],
-    s=1000 * radius,
-    edgecolors="r",
-    facecolors="none",
-    label="Outlier scores",
-)
-plt.axis("tight")
-plt.xlim((-5, 5))
-plt.ylim((-5, 5))
-plt.xlabel("prediction errors: %d" % (n_errors))
-plt.legend(
-    handler_map={scatter: HandlerPathCollection(update_func=update_legend_marker_size)}
-)
-plt.title("Local Outlier Factor (LOF)")
-plt.show()
-
-#########################################################################################
 
 
 
@@ -150,11 +122,38 @@ s = svm.SVC(kernel = 'linear')
 s.fit(trainData, trainTarget)
 decisions = s.predict(testData)
 
-#Training Model with KNN
-n_neighbors = 7 # K in KNN classifier
+
+# Parameter Tuning for KNN n value
+
+
+#List Hyperparameters that we want to tune.
+n_neighbors = list(range(1,30))
+#Convert to dictionary
+hyperparameters = dict(n_neighbors=n_neighbors)
+#Create new KNN object
+knn_2 = KNeighborsClassifier()
+#Use GridSearch
+clf = GridSearchCV(knn_2, hyperparameters, cv=10)
+#Fit the model
+best_model = clf.fit(data, target)
+#Print The value of best Hyperparameters
+print('Best n_neighbors:', best_model.best_estimator_.get_params()['n_neighbors'])
+
+
+#Using PCA
+pca = PCA(n_components=2)
+pca.fit(trainData)
+print(pca.explained_variance_)
+print(pca.explained_variance_ratio_)
+
+trainDataPCA = pca.transform(trainData)
+testDataPCA = pca.transform(testData)
+
+#Training Model with KNN  (UPDATED TO USE PCA)
+n_neighbors = 23 # K in KNN classifier
 nn = neighbors.KNeighborsClassifier(n_neighbors)
-nn.fit(trainData, trainTarget) #Training is done
-pr = nn.predict(testData) # testing
+nn.fit(trainDataPCA, trainTarget) #Training is done
+pr = nn.predict(testDataPCA) # testing
 print(pr)
 
 def accuracy(decisions, testTarget):
@@ -165,9 +164,14 @@ def accuracy(decisions, testTarget):
     return correct/len(decisions)
 
 print("accuracy of svm is: ", accuracy(decisions, testTarget))
-
-
 print("accuracy of knn is: ", accuracy(pr, testTarget))
+
+# CLASSIFICATION REPORT
+
+#y_pred = LogisticRegression(testData)
+#print(classification_report(testTarget, y_pred))
+#roc_auc_score(testTarget, y_pred)
+
 
 
 
