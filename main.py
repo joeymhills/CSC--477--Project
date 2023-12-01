@@ -1,8 +1,9 @@
 import numpy as np
-from sklearn import svm, datasets, neighbors
+from sklearn import svm, datasets, neighbors, preprocessing
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier, LocalOutlierFactor
+from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from matplotlib.legend_handler import HandlerPathCollection
 import pandas as pd
@@ -33,20 +34,10 @@ data = np.loadtxt("heart+disease/processed.cleveland.data", delimiter=",")
 
 data = data[data[:,-1].argsort()]
 
+features = data[:, :-1]
 
-age = data[:,0]
-sex = data[:,1]
-chest_pain = data[:,2]
-resting_blood_pres = data[:,3]
-cholesteral = data[:,4]
-fasting_blood_sugar = data[:,5]
-resting_ecg = data[:,6]
-max_heart_rate = data[:,7]
-exercise_induced_angina = data[:,8]
-oldpeak = data[:,9]
-slope = data[:,10]
-num_vessels_colored = data[:,11]
-thal = data[:,12]
+scaler = MinMaxScaler()
+data[:, :-1] = scaler.fit_transform(features)
 
 target = data[:,13]
 
