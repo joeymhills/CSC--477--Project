@@ -62,56 +62,70 @@ trainTarget = []
 testData = []
 testTarget = []
 
+
+#CODE USED FOR OUTLIER DETECTION
+#outliers were manually removed after detection thus this code is no longer needed
+'''
+lof = LocalOutlierFactor()
+yhat = lof.fit_predict(data)
+print(yhat)
+idx = 0
+removeList = []
+for curr in yhat:
+    if curr == -1:
+       removeList.append(idx)
+    idx += 1
+print(removeList)
+'''
+
 #divide data into training and testing sets
 #training set is 80% of data, testing set is 20%
-
  #Class 0 data separation
-for i in range(0,129):
+for i in range(0,126):
     trainData.append(data[i])
     trainTarget.append(target[i])
     curr = data[i]
     print("class 0", data[i,13])
-for i in range(130,163):
+for i in range(127,158):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 0", data[i,13])
  #Class 1 data separation
-for i in range(164, 207):
+for i in range(159, 210):
     trainData.append(data[i])
     trainTarget.append(target[i])
     print("class 1", data[i,13])
-for i in range(208, 219):
+for i in range(211, 213):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 1", data[i,13])
 #Class 2 data separation
-for i in range(220,248):
+for i in range(220,240):
     trainData.append(data[i])
     trainTarget.append(target[i])
     print("class 2", data[i,13])
-for i in range(249,255):
+for i in range(241,247):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 2", data[i,13])
 #Class 3 data separation
-for i in range(256,284):
+for i in range(256,273):
     trainData.append(data[i])
     trainTarget.append(target[i])
     print("class 3", data[i,13])
-for i in range(285,290):
+for i in range(274,281):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 3", data[i,13])
 #Class 4 data separation
-for i in range(291,299):
+for i in range(282,289):
     trainData.append(data[i])
     trainTarget.append(target[i])
     print("class 4", data[i,13])
-for i in range(300,303):
+for i in range(290,293):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 4", data[i,13])
-
 
 
 
@@ -124,7 +138,6 @@ decisions = s.predict(testData)
 
 
 # Parameter Tuning for KNN n value
-
 
 #List Hyperparameters that we want to tune.
 n_neighbors = list(range(1,30))
