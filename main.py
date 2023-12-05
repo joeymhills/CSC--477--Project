@@ -82,11 +82,11 @@ for i in range(127,158):
     testTarget.append(target[i])
     print("class 0", data[i,13])
  #Class 1 data separation
-for i in range(159, 210):
+for i in range(159, 201):
     trainData.append(data[i])
     trainTarget.append(target[i])
     print("class 1", data[i,13])
-for i in range(211, 213):
+for i in range(202, 213):
     testData.append(data[i])
     testTarget.append(target[i])
     print("class 1", data[i,13])
@@ -122,11 +122,6 @@ for i in range(290,293):
 
 
 
-#Training Model with SVM
-s = svm.SVC(kernel = 'linear')
-s.fit(trainData, trainTarget)
-decisions = s.predict(testData)
-
 
 # Parameter Tuning for KNN n value
 
@@ -154,11 +149,19 @@ trainDataPCA = pca.transform(trainData)
 testDataPCA = pca.transform(testData)
 
 #Training Model with KNN  (UPDATED TO USE PCA)
-n_neighbors = 23 # K in KNN classifier
+n_neighbors = 1 # K in KNN classifier
 nn = neighbors.KNeighborsClassifier(n_neighbors)
 nn.fit(trainDataPCA, trainTarget) #Training is done
 pr = nn.predict(testDataPCA) # testing
-print(pr)
+print("knn predictions", pr)
+print("test target", testTarget)
+
+#print(classification_report(testTarget, y_pred))
+
+#Training Model with SVM
+s = svm.SVC(kernel = 'linear')
+s.fit(trainData, trainTarget)
+decisions = s.predict(testData)
 
 def accuracy(decisions, testTarget):
     correct = 0
@@ -173,8 +176,13 @@ print("accuracy of knn is: ", accuracy(pr, testTarget))
 # CLASSIFICATION REPORT
 
 #y_pred = LogisticRegression(testData)
-#print(classification_report(testTarget, y_pred))
-#roc_auc_score(testTarget, y_pred)
+print("Classification report for the SVM model:")
+print(classification_report(decisions, testTarget))
+#roc_auc_score(decisions, testTarget)
+
+print("Classification report for the KNN model:")
+print(classification_report(pr, testTarget))
+#roc_auc_score(pr, testTarget)
 
 
 
