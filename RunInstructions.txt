@@ -1,0 +1,4 @@
+# No real instructions, just run main.py
+# Code should run without issue.  Dataset should import and all code should run.
+# Might need to pip install scikit-learn pandas matplotlib numpy
+# if those are not already installed
