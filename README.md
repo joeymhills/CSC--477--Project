@@ -1,4 +1,4 @@
-# Heart disease machine learning model
+# Heart Disease Machine Learning Model
 
 This is a machine learning model intended as a non-invasive
 pre-screening tool for the presence of heart disease in a patient.
